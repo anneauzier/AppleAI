@@ -9,17 +9,14 @@ import SwiftUI
 import FoundationModels
 
 @Observable
-class GQsViewModel {// foundation models com json
+class GQsViewModel {
 
+    var learningTopic: String = ""
+    var guidingQuestions: [String] = []
+    var isGenerating: Bool = false
+    var errorMessage: String?
 
-    var guidingQuestions: [String]
-    
-    var learningTopic: String
-
-    init() {
-        guidingQuestions = []
-        learningTopic = ""
-    }
+    var investigate: InvestigatePhase?
 
     let instructions = "Generate a list os guiding questions following the CBL principles. The output must be  list of questions based on the text description."
     
@@ -31,10 +28,20 @@ class GQsViewModel {// foundation models com json
         return result.content
     }
     
-//
-//    func featureToEdit(_ feature: String) {
-//        featureText = feature
-//        featureList.removeAll(where: { $0 == feature})
-//    }
+    @MainActor
+    func generate() async {
+        guard learningTopic.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
+            errorMessage = "Digite um tópico antes de gerar"
+            return
+        }
+        
+        isGenerating = true
+        defer { isGenerating = false }
+        do {
+            investigate = try await generateGQs()
+        } catch {
+            errorMessage = "Sorry :( Houve um erro ao gerar as guiding questions."
+        }
+    }
 
 }
