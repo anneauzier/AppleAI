@@ -59,7 +59,9 @@ struct GeneratedSection: View {
                         }
                     }.listStyle(.plain)
                 } else {
-                    ContentUnavailableView("No GQ's generated yet.", systemImage: "questionmark.circle", description: Text("Digite um tópico e toque em Gerar."))
+                    if !isLoading {
+                        ContentUnavailableView("No GQ's generated yet.", systemImage: "questionmark.circle", description: Text("Digite um tópico e toque em Gerar."))
+                    }
                 }
                 
                 if isLoading {
